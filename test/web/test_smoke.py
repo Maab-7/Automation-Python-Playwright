@@ -1,5 +1,5 @@
-from os import sync
-from playwright.sync_api import sync_playwright, expect
+from playwright.sync_api import expect, sync_playwright
+
 
 def test_homepage_title():
     with sync_playwright() as p:
@@ -8,5 +8,3 @@ def test_homepage_title():
         page.goto("https://example.com")
         expect(page).to_have_title("Example Domain")
         browser.close()
-
-        
