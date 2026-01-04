@@ -8,7 +8,7 @@ def pytest_addoption(parser):
     parser.addoption(
         "--base-url",
         action="store",
-        default=os.getenv("BASE_URL", "https://example.com"),
+        default=os.getenv("BASE_URL", "https://the-internet.herokuapp.com"),
     )
     parser.addoption("--headed", action="store_true", default=False)
 
