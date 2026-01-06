@@ -1,7 +1,11 @@
 import os
 
 import pytest
-from playwright.sync_api import sync_playwright
+from playwright.sync_api import expect, sync_playwright
+
+from data.credentials import VALID_PASSWORD, VALID_USER
+from pages.login_page import LoginPage
+from pages.secure_page import SecurePage
 
 
 def pytest_addoption(parser):
@@ -51,3 +55,17 @@ def page(context, base_url):
     page.goto(base_url)
     yield page
     page.close()
+
+
+@pytest.fixture()
+def logged_in_page(page, base_url):
+    login = LoginPage(page, base_url)
+    secure = SecurePage(page, base_url)
+
+    login.open()
+    login.login(VALID_USER, VALID_PASSWORD)
+
+    # sanity check para asegurar que el inicio de sesión fue exitoso
+    expect(page).to_have_url(secure.url)
+
+    return page, login, secure
