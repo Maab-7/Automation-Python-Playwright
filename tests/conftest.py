@@ -57,8 +57,15 @@ def page(context, base_url):
     page.close()
 
 
+# Fixture para proporcionar una página ya autenticada
 @pytest.fixture()
 def logged_in_page(page, base_url):
+    # Un fixture es una función especial que se utiliza para configurar
+    # el entorno de prueba y proporcionar datos o estados necesarios
+    # para las pruebas.
+    # Aquí, el fixture 'logged_in_page' se encarga de iniciar sesión
+    # en la aplicación web antes de que se ejecute cualquier prueba
+    # que lo requiera.
     login = LoginPage(page, base_url)
     secure = SecurePage(page, base_url)
 
@@ -69,3 +76,5 @@ def logged_in_page(page, base_url):
     expect(page).to_have_url(secure.url)
 
     return page, login, secure
+    # Se devuelve la página, junto con los objetos de las páginas
+    # de inicio de sesión y segura para su uso en las pruebas
