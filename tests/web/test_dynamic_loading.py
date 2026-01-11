@@ -18,6 +18,7 @@ def test_dynamic_loading_example1_smoke(page, base_url):
 
 @pytest.mark.web
 @pytest.mark.regression
+# Testear ambos ejemplos de carga dinámica
 @pytest.mark.parametrize("example", [1, 2])
 def test_dynamic_loading_examples_regression(page, base_url, example):
     dl = DynamicLoadingPage(page, base_url, example=example)
