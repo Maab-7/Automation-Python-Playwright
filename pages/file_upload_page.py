@@ -19,6 +19,7 @@ class FileUploadPage(BasePage):
         self.go(self.PATH)
 
     def upload(self, file_path: Path) -> None:
+        # Establece el archivo para cargar y hace clic en el botón de carga
         self.file_input.set_input_files(str(file_path))
         self.upload_button.click()
 
