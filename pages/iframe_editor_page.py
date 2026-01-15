@@ -7,9 +7,14 @@ class IframeEditorPage(BasePage):
     PATH = "/iframe"
 
     def __init__(self, page: Page, base_url: str):
+        # Inicializamos la página base, heredando sus funcionalidades
         super().__init__(page, base_url)
+        # Usamos FrameLocator para interactuar con el iframe del editor
+        # Definimos los selectores necesarios
+        # Desde aqui podemos interactuar con el iframe y sus elementos
         self.frame: FrameLocator = page.frame_locator("#mce_0_ifr")
         self.editor_body: Locator = self.frame.locator("body")
+        # Selector para cerrar el banner de solo lectura
         self.readonly_banner_close: Locator = page.locator(
             ".tox-notification__dismiss"
         )  # la X
@@ -18,9 +23,12 @@ class IframeEditorPage(BasePage):
         self.go(self.PATH)
 
     def close_banner_if_present(self) -> None:
+        # Cerramos el banner de solo lectura si está presente
         if self.readonly_banner_close.is_visible():
             self.readonly_banner_close.click()
 
     def expect_editor_loaded(self) -> None:
+        # Verificamos que el editor dentro del iframe esté cargado correctamente
         expect(self.editor_body).to_be_visible()
+        # Verificamos que el contenido inicial del editor sea el esperado
         expect(self.editor_body).to_contain_text("Your content goes here.")
