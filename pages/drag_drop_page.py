@@ -2,6 +2,12 @@ from playwright.sync_api import Locator, Page, expect
 
 from pages.base_page import BasePage
 
+# Estas importaciones permiten
+# Locator para guardar referencias a elementos de la página
+# Page La pestaña del navegador
+# expect para realizar aserciones en los tests
+# BasePage es la clase base que contiene funcionalidades comunes para todas las páginas
+
 
 class DragDropPage(BasePage):
     PATH = "/drag_and_drop"
