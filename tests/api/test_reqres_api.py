@@ -1,31 +1,12 @@
-import os
-
 import pytest
-import requests
-
-BASE_URL = "https://reqres.in/api"
-API_KEY = os.getenv("REQRES_API_KEY")
-
-HEADERS = {
-    "x-api-key": API_KEY or "",
-    "User-Agent": "qa-automation/1.0",
-}
-
-
-@pytest.fixture(autouse=True)
-def require_api_key():
-    if not API_KEY:
-        pytest.skip("API key not set in environment variable REQRES_API_KEY")
 
 
 @pytest.mark.api
 @pytest.mark.smoke
-def test_get_users_page_2():
+def test_get_users_page_2(api_client):
     # En la siguiente línea hacemos una solicitud GET a la API de ReqRes
     # Construyendo la URL con el parámetro de consulta para la página 2
-    r = requests.get(
-        f"{BASE_URL}/users", params={"page": 2}, headers=HEADERS, timeout=10
-    )
+    r = api_client.get("/users", params={"page": 2})
     # Verificamos que la respuesta tenga un código de estado 200 (OK)
     assert r.status_code == 200
     # Parseamos la respuesta JSON
@@ -40,9 +21,9 @@ def test_get_users_page_2():
 
 @pytest.mark.api
 @pytest.mark.regression
-def test_create_user():
+def test_create_user(api_client):
     payload = {"name": "morpheus", "job": "leader"}
-    r = requests.post(f"{BASE_URL}/users", json=payload, headers=HEADERS, timeout=10)
+    r = api_client.post("/users", json=payload)
     assert r.status_code == 201
 
     data = r.json()
@@ -55,10 +36,10 @@ def test_create_user():
 
 
 @pytest.mark.api
-def test_login_success():
+def test_login_success(api_client):
     # Probamos el endpoint de login con credenciales válidas
     payload = {"email": "eve.holt@reqres.in", "password": "cityslicka"}
-    r = requests.post(f"{BASE_URL}/login", json=payload, headers=HEADERS, timeout=10)
+    r = api_client.post("/login", json=payload)
     assert r.status_code == 200
 
     data = r.json()
@@ -69,9 +50,10 @@ def test_login_success():
 
 
 @pytest.mark.api
-def test_login_missing_password_should_fail():
+def test_login_missing_password_should_fail(api_client):
     payload = {"email": "eve.holt@reqres.in"}
-    r = requests.post(f"{BASE_URL}/login", json=payload, headers=HEADERS, timeout=10)
+    r = api_client.post("/login", json=payload)
+
     assert r.status_code == 400
 
     data = r.json()

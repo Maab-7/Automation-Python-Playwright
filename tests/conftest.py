@@ -1,11 +1,13 @@
 import os
 
 import pytest
+import requests
 from playwright.sync_api import expect, sync_playwright
 
 from data.credentials import VALID_PASSWORD, VALID_USER
 from pages.login_page import LoginPage
 from pages.secure_page import SecurePage
+from src.api_client import ApiClient
 
 
 def pytest_addoption(parser):
@@ -78,3 +80,26 @@ def logged_in_page(page, base_url):
     return page, login, secure
     # Se devuelve la página, junto con los objetos de las páginas
     # de inicio de sesión y segura para su uso en las pruebas
+
+
+@pytest.fixture(scope="session")
+def reqres_api_key() -> str:
+    key = os.getenv("REQRES_API_KEY")
+    if not key:
+        pytest.skip("Missing REQRES_API_KEY env var")
+    return key
+
+
+@pytest.fixture()
+def api_client(reqres_api_key: str):
+    session = requests.Session()
+    headers = {
+        "x-api-key": reqres_api_key,
+        "User-Agent": "qa-automation/1.0",
+        "Accept": "application/json",
+    }
+    client = ApiClient(
+        base_url="https://reqres.in/api", headers=headers, session=session
+    )
+    yield client
+    session.close()
