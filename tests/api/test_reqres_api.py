@@ -94,3 +94,23 @@ def test_login_success_token(api_client):
     # Verificamos que el token sea una cadena no vacía
     assert isinstance(data["token"], str)
     assert len(data["token"]) > 0
+
+
+@pytest.mark.api
+@pytest.mark.parametrize(
+    "payload, expected_error",
+    [
+        ({"email": "eve.holt@reqres.in"}, "Missing password"),
+        ({"password": "cityslicka"}, "Missing email or username"),
+    ],
+)
+def test_login_failure_cases(api_client, payload, expected_error):
+    # Probamos el endpoint de login con diferentes casos de datos faltantes
+    r = api_client.post("/login", json=payload)
+    # Verificamos que la respuesta tenga un código de estado 400 (Bad Request)
+    assert r.status_code == 400
+
+    # Parseamos la respuesta JSON
+    data = r.json()
+    # Verificamos que el mensaje de error coincida con el esperado
+    assert data["error"] == expected_error
