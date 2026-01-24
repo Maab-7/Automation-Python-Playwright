@@ -59,3 +59,38 @@ def test_login_missing_password_should_fail(api_client):
     data = r.json()
     # Verificamos que el mensaje de error sea el esperado
     assert "error" in data
+
+
+# Se utiliza mar.api para categorizar la prueba como una prueba de API
+@pytest.mark.api
+def test_get_users_page_1(api_client):
+    # Hacemos una solicitud GET a la API de ReqRes para la página 1
+    r = api_client.get("/users", params={"page": 1})
+    # Verificamos que la respuesta tenga un código de estado 200 (OK)
+    assert r.status_code == 200
+    # Parseamos la respuesta JSON
+    data = r.json()
+    # Verificamos que la página devuelta sea la 1
+    assert data["page"] == 1
+    # Verificamos que la lista de usuarios no esté vacía
+    assert isinstance(data["data"], list)
+    # Verificamos que la lista de usuarios tenga al menos un elemento
+    assert len(data["data"]) > 0
+
+
+@pytest.mark.api
+def test_login_success_token(api_client):
+    # Probamos el endpoint de login con credenciales válidas
+    payload = {"email": "eve.holt@reqres.in", "password": "cityslicka"}
+    # Realizamos la solicitud POST al endpoint de login
+    r = api_client.post("/login", json=payload)
+    # Verificamos que la respuesta tenga un código de estado 200 (OK)
+    assert r.status_code == 200
+
+    # Parseamos la respuesta JSON
+    data = r.json()
+    # Verificamos que se haya devuelto un token de autenticación
+    assert "token" in data
+    # Verificamos que el token sea una cadena no vacía
+    assert isinstance(data["token"], str)
+    assert len(data["token"]) > 0
