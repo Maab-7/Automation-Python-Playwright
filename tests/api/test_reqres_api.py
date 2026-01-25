@@ -114,3 +114,23 @@ def test_login_failure_cases(api_client, payload, expected_error):
     data = r.json()
     # Verificamos que el mensaje de error coincida con el esperado
     assert data["error"] == expected_error
+
+
+@pytest.mark.api
+# Usamos parametrize para probar múltiples páginas en una sola función de prueba
+@pytest.mark.parametrize("page", [1, 2])
+def test_get_users_pages(api_client, page):
+    # Hacemos una solicitud GET a la API de ReqRes para la página especificada
+    r = api_client.get("/users", params={"page": page})
+    # Verificamos que la respuesta tenga un código de estado 200 (OK)
+    assert r.status_code == 200
+    # Parseamos la respuesta JSON
+    data = r.json()
+    # Verificamos que la página devuelta sea la esperada
+    assert data["page"] == page
+    # Verificamos que la lista de usuarios no esté vacía
+    assert isinstance(data["data"], list)
+    # Verificamos que la lista de usuarios tenga al menos un elemento
+    assert len(data["data"]) > 0
+    assert "id" in data["data"][0]
+    assert "email" in data["data"][0]
