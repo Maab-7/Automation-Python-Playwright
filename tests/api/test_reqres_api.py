@@ -134,3 +134,13 @@ def test_get_users_pages(api_client, page):
     assert len(data["data"]) > 0
     assert "id" in data["data"][0]
     assert "email" in data["data"][0]
+
+
+@pytest.mark.api
+def test_get_user_not_found(api_client):
+    # Hacemos una solicitud GET a la API de ReqRes para un usuario inexistente
+    r = api_client.get("/users/23")
+    # Verificamos que la respuesta tenga un código de estado 404 (Not Found)
+    assert r.status_code == 404
+    # Verificamos que el cuerpo de la respuesta esté vacío
+    assert r.json() == {}
