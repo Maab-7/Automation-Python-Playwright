@@ -144,3 +144,19 @@ def test_get_user_not_found(api_client):
     assert r.status_code == 404
     # Verificamos que el cuerpo de la respuesta esté vacío
     assert r.json() == {}
+
+
+@pytest.mark.api
+def test_create_user_basic(api_client):
+    payload = {"name": "neo", "job": "the one"}
+    r = api_client.post("/users", json=payload)
+    assert r.status_code == 201
+
+    data = r.json()
+    # Verificamos que los datos devueltos coincidan con los enviados
+    assert data["name"] == "neo"
+    assert data["job"] == "the one"
+    # Verificamos que se hayan generado un id y una marca de tiempo
+    assert "id" in data
+    # Verificamos que se haya generado una marca de tiempo de creación
+    assert "createdAt" in data
