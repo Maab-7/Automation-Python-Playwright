@@ -63,6 +63,7 @@ def test_login_missing_password_should_fail(api_client):
 
 # Se utiliza mar.api para categorizar la prueba como una prueba de API
 @pytest.mark.api
+@pytest.mark.smoke
 def test_get_users_page_1(api_client):
     # Hacemos una solicitud GET a la API de ReqRes para la página 1
     r = api_client.get("/users", params={"page": 1})
@@ -79,6 +80,7 @@ def test_get_users_page_1(api_client):
 
 
 @pytest.mark.api
+@pytest.mark.smoke
 def test_login_success_token(api_client):
     # Probamos el endpoint de login con credenciales válidas
     payload = {"email": "eve.holt@reqres.in", "password": "cityslicka"}
