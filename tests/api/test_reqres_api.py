@@ -175,3 +175,27 @@ def test_create_user_basic(api_client):
     assert "id" in data
     # Verificamos que se haya generado una marca de tiempo de creación
     assert "createdAt" in data
+
+
+@pytest.mark.api
+def test_get_users_response_shape(api_client):
+    r = api_client.get("/users", params={"page": 1})
+    assert r.status_code == 200
+
+    data = r.json()
+    # Verificamos la estructura de la respuesta
+    assert "page" in data
+    # Verificamos que los campos de paginación estén presentes
+    assert "per_page" in data
+    assert "total" in data
+    assert "total_pages" in data
+    assert "data" in data
+    assert isinstance(data["data"], list)
+    assert len(data["data"]) > 0
+    # Verificamos que cada usuario tenga los campos esperados
+    first = data["data"][0]
+    assert "id" in first
+    assert "email" in first
+    assert "first_name" in first
+    assert "last_name" in first
+    assert "avatar" in first
