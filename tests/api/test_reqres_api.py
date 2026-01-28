@@ -1,6 +1,15 @@
 import pytest
 
 
+def login_payload(email: str | None = None, password: str | None = None):
+    payload = {}
+    if email is not None:
+        payload["email"] = email
+    if password is not None:
+        payload["password"] = password
+    return payload
+
+
 @pytest.mark.api
 @pytest.mark.smoke
 def test_get_users_page_2(api_client):
@@ -38,7 +47,7 @@ def test_create_user(api_client):
 @pytest.mark.api
 def test_login_success(api_client):
     # Probamos el endpoint de login con credenciales válidas
-    payload = {"email": "eve.holt@reqres.in", "password": "cityslicka"}
+    payload = login_payload("eve.holt@reqres.in", "cityslicka")
     r = api_client.post("/login", json=payload)
     assert r.status_code == 200
 
@@ -51,7 +60,8 @@ def test_login_success(api_client):
 
 @pytest.mark.api
 def test_login_missing_password_should_fail(api_client):
-    payload = {"email": "eve.holt@reqres.in"}
+    # payload = {"email": "eve.holt@reqres.in"}
+    payload = login_payload(email="eve.holt@reqres.in")
     r = api_client.post("/login", json=payload)
 
     assert r.status_code == 400
@@ -83,7 +93,8 @@ def test_get_users_page_1(api_client):
 @pytest.mark.smoke
 def test_login_success_token(api_client):
     # Probamos el endpoint de login con credenciales válidas
-    payload = {"email": "eve.holt@reqres.in", "password": "cityslicka"}
+    # payload = {"email": "eve.holt@reqres.in", "password": "cityslicka"}
+    payload = login_payload("eve.holt@reqres.in", "cityslicka")
     # Realizamos la solicitud POST al endpoint de login
     r = api_client.post("/login", json=payload)
     # Verificamos que la respuesta tenga un código de estado 200 (OK)
@@ -102,8 +113,10 @@ def test_login_success_token(api_client):
 @pytest.mark.parametrize(
     "payload, expected_error",
     [
-        ({"email": "eve.holt@reqres.in"}, "Missing password"),
-        ({"password": "cityslicka"}, "Missing email or username"),
+        # ({"email": "eve.holt@reqres.in"}, "Missing password"),
+        # ({"password": "cityslicka"}, "Missing email or username"),
+        (login_payload(email="eve.holt@reqres.in"), "Missing password"),
+        (login_payload(password="cityslicka"), "Missing email or username"),
     ],
 )
 def test_login_failure_cases(api_client, payload, expected_error):
