@@ -199,3 +199,18 @@ def test_get_users_response_shape(api_client):
     assert "first_name" in first
     assert "last_name" in first
     assert "avatar" in first
+
+
+@pytest.mark.api
+def test_create_user_and_validate_fields(api_client):
+    payload = {"name": "trinity", "job": "operator"}
+    r = api_client.post("/users", json=payload)
+    assert r.status_code == 201
+
+    data = r.json()
+    # Verificamos que los datos devueltos coincidan con los enviados
+    assert data["name"] == "trinity"
+    assert data["job"] == "operator"
+    # Verificamos que se hayan generado un id y una marca de tiempo
+    assert "id" in data
+    assert data["id"]  # no vacio
