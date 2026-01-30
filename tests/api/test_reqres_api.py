@@ -34,6 +34,23 @@ def test_get_users_schema(api_client):
     validate(instance=r.json(), schema=USER_SCHEMA)
 
 
+LOGIN_SCHEMA = {
+    "type": "object",
+    "required": ["token"],
+    "properties": {
+        "token": {"type": "string"},
+    },
+}
+
+
+@pytest.mark.api
+def test_login_schema(api_client):
+    payload = login_payload("eve.holt@reqres.in", "cityslicka")
+    r = api_client.post("/login", json=payload)
+    assert r.status_code == 200
+    validate(instance=r.json(), schema=LOGIN_SCHEMA)
+
+
 def login_payload(email: str | None = None, password: str | None = None):
     payload = {}
     if email is not None:
