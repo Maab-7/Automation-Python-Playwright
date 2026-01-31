@@ -162,3 +162,11 @@ def test_get_users_response_time(api_client):
     assert r.status_code == 200
     # Verifica que el tiempo de respuesta sea menor a 2 segundos
     assert elapsed < 2.0
+
+
+@pytest.mark.api
+def test_get_users_content_type(api_client):
+    r = api_client.get("/users", params={"page": 1})
+    assert r.status_code == 200
+    # Verifica que el encabezado Content-Type sea application/json; charset=utf-8
+    assert "application/json" in r.headers.get("Content-Type", "")
