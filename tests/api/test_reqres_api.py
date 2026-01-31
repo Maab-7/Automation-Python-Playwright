@@ -1,3 +1,6 @@
+# Importa el modulo time para medir el tiempo de respuesta
+import time
+
 import pytest
 from jsonschema import validate
 
@@ -144,3 +147,18 @@ def test_get_user_not_found(api_client):
     r = api_client.get("/users/23")
     assert r.status_code == 404
     assert r.json() == {}
+
+
+# Este es un nuevo test para medir el tiempo de respuesta
+@pytest.mark.api
+def test_get_users_response_time(api_client):
+    # Measure the response time for the GET /users endpoint
+    # Guarda el tiempo actual con alta precision
+    start = time.perf_counter()
+    r = api_client.get("/users", params={"page": 1})
+    # Calcula el tiempo transcurrido
+    elapsed = time.perf_counter() - start
+
+    assert r.status_code == 200
+    # Verifica que el tiempo de respuesta sea menor a 2 segundos
+    assert elapsed < 2.0
