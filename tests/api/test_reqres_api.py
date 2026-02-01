@@ -1,7 +1,7 @@
-# Importa el modulo time para medir el tiempo de respuesta
 import time
 
 import pytest
+import requests
 from jsonschema import validate
 
 USER_SCHEMA = {
@@ -176,3 +176,23 @@ def test_get_users_content_type(api_client):
 def test_api_client_headers(api_client):
     assert api_client.headers.get("Accept") == "application/json"
     assert api_client.headers["User-Agent"] == "qa-automation/1.0"
+
+
+def get_with_retry(
+    api_client, path, retries=2, delay=0.5, **kwargs
+) -> requests.Response:
+    last_exc = None
+    for _ in range(retries + 1):
+        try:
+            return api_client.get(path, **kwargs)
+        except Exception as exc:
+            last_exc = exc
+            time.sleep(delay)
+    assert last_exc is not None
+    raise last_exc
+
+
+@pytest.mark.api
+def test_get_users_with_retry(api_client):
+    r = get_with_retry(api_client, "/users", params={"page": 1})
+    assert r.status_code == 200
