@@ -170,3 +170,9 @@ def test_get_users_content_type(api_client):
     assert r.status_code == 200
     # Verifica que el encabezado Content-Type sea application/json; charset=utf-8
     assert "application/json" in r.headers.get("Content-Type", "")
+
+
+@pytest.mark.api
+def test_api_client_headers(api_client):
+    assert api_client.headers.get("Accept") == "application/json"
+    assert api_client.headers["User-Agent"] == "qa-automation/1.0"
