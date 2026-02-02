@@ -4,6 +4,9 @@ import pytest
 import requests
 from jsonschema import validate
 
+# Importa las excepciones específicas de requests para manejar timeouts
+from requests.exceptions import ReadTimeout
+
 USER_SCHEMA = {
     "type": "object",
     "required": ["page", "per_page", "total", "total_pages", "data"],
@@ -195,4 +198,31 @@ def get_with_retry(
 @pytest.mark.api
 def test_get_users_with_retry(api_client):
     r = get_with_retry(api_client, "/users", params={"page": 1})
+    assert r.status_code == 200
+
+
+# Define un helper que reintenta solo en caso de timeouts
+def get_with_retry_on_timeout(
+    api_client, path, retries=2, delay=0.5, **kwargs
+) -> requests.Response:
+    # Variable para almacenar la última excepción
+    last_exc = None
+    # Intenta la llamada varias veces
+    for _ in range(retries + 1):
+        try:
+            # Si la llamada es exitosa, retorna la respuesta
+            return api_client.get(path, **kwargs)
+        # Si ocurre un timeout, captura la excepción y espera antes de reintentar
+        except (ReadTimeout, ConnectionError) as exc:
+            last_exc = exc
+            time.sleep(delay)
+    # Si todas las reintentos fallan, lanza la última excepción capturada
+    assert last_exc is not None
+    raise last_exc
+
+
+@pytest.mark.api
+# Prueba el helper que reintenta solo en caso de timeouts
+def test_get_users_with_retry_on_timeout(api_client):
+    r = get_with_retry_on_timeout(api_client, "/users", params={"page": 1})
     assert r.status_code == 200
