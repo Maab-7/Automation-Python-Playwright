@@ -37,3 +37,17 @@ def test_logout_redirects_to_login(logged_in_page, base_url):
 
     secure.logout()
     assert page.url == f"{base_url}/login"
+
+
+# Probando un login fallido y validando el mensaje
+@pytest.mark.ui
+def test_login_invalid_shows_error(page, base_url):
+    page.goto(f"{base_url}/login")
+
+    page.get_by_label("Username").fill("bad_user")
+    page.get_by_label("Password").fill("bad_pass")
+    page.get_by_role("button", name="Login").click()
+
+    flash = page.locator("#flash")
+    flash.wait_for(state="visible")
+    assert "Your username is invalid!" in flash.inner_text()
