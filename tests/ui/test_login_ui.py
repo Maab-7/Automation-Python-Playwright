@@ -29,3 +29,11 @@ def test_secure_page_flash_message(logged_in_page):
     flash.wait_for(state="visible")
     # Verifica que el mensaje contenga el texto esperado
     assert "You logged into a secure area!" in flash.inner_text()
+
+
+@pytest.mark.ui
+def test_logout_redirects_to_login(logged_in_page, base_url):
+    page, login, secure = logged_in_page
+
+    secure.logout()
+    assert page.url == f"{base_url}/login"

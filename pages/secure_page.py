@@ -15,8 +15,11 @@ class SecurePage:
     def url(self) -> str:
         return f"{self.base_url}{self.PATH}"
 
-    def logout(self) -> None:
-        self.logout_link.click()
+    # def logout(self) -> None:
+    #   self.logout_link.click()
+
+    def logout(self):
+        self.logout_button().click()
 
     def logout_button(self):
         return self.page.get_by_role("link", name="Logout")
