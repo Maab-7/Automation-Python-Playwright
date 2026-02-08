@@ -50,4 +50,5 @@ def test_login_invalid_shows_error(page, base_url):
 
     flash = page.locator("#flash")
     flash.wait_for(state="visible")
-    assert "Your username is invalid!" in flash.inner_text()
+    # assert "Your username is invalid!" in flash.inner_text()
+    assert "Texto incorrecto" in flash.inner_text()

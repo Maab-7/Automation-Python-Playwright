@@ -45,9 +45,15 @@ def browser(playwright_instance, headed):
 
 
 @pytest.fixture()
-def context(browser):
+def context(browser, request):
     ctx = browser.new_context()
+    ctx.tracing.start(screenshots=True, snapshots=True, sources=True)
+
     yield ctx
+
+    os.makedirs("test-results", exist_ok=True)
+    trace_path = f"test-results/{request.node.name}-trace.zip"
+    ctx.tracing.stop(path=trace_path)
     ctx.close()
 
 
