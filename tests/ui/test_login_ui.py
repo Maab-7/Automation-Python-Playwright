@@ -13,7 +13,8 @@ def test_secure_page_has_logout_button(logged_in_page):
     # Espera explicita a un elemento clave en la página segura
     # busca el botón de cierre de sesión, usando un selector CSS
     # logout = page.locator("a.button.secondary")
-    logout = page.get_by_role("link", name="Logout")
+    # logout = page.get_by_role("link", name="Logout")
+    logout = secure.logout_button()
     # Espera hasta que el botón de cierre de sesión sea visible
     logout.wait_for(state="visible")
     # Verifica que el botón de cierre de sesión esté visible
