@@ -24,3 +24,7 @@ class LoginPage:
         self.username.fill(user)
         self.password.fill(pwd)
         self.login_button.click()
+
+    def login_invalid(self, username: str, password: str):
+        self.open()
+        self.login(username, password)
